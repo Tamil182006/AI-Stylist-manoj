@@ -14,10 +14,26 @@ const DashboardHome = () => {
     });
     const [recentAnalyses, setRecentAnalyses] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [profile, setProfile] = useState(null);
 
     useEffect(() => {
         fetchDashboardData();
+        fetchProfile();
     }, []);
+
+    const fetchProfile = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await axios.get('http://localhost:5000/api/profile', {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            if (response.data.success && response.data.hasProfile) {
+                setProfile(response.data.profile);
+            }
+        } catch (error) {
+            console.error('Error fetching profile:', error);
+        }
+    };
 
     const fetchDashboardData = async () => {
         try {
@@ -240,6 +256,57 @@ const DashboardHome = () => {
                             <span className="insight-label">Outfits Created:</span>
                             <span className="insight-value">{stats.totalOutfits}</span>
                         </div>
+                    </div>
+                </section>
+            )}
+
+            {/* Profile Summary (if exists) */}
+            {profile && (
+                <section className="profile-summary-section">
+                    <h2 className="section-title">
+                        <span className="title-icon">✨</span>
+                        Your Style Profile
+                    </h2>
+                    <div className="profile-summary-card">
+                        <div className="profile-row">
+                            <div className="profile-item">
+                                <span className="profile-label">Face Shape</span>
+                                <span className="profile-value">{profile.physical?.faceShape?.type}</span>
+                            </div>
+                            <div className="profile-item">
+                                <span className="profile-label">Skin Tone</span>
+                                <div className="profile-skin">
+                                    <div
+                                        className="skin-dot"
+                                        style={{ backgroundColor: profile.physical?.skinTone?.hex }}
+                                    ></div>
+                                    <span className="profile-value">{profile.physical?.skinTone?.category}</span>
+                                </div>
+                            </div>
+                            <div className="profile-item">
+                                <span className="profile-label">Body Type</span>
+                                <span className="profile-value">{profile.bodyType?.category}</span>
+                            </div>
+                            <div className="profile-item">
+                                <span className="profile-label">Style</span>
+                                <span className="profile-value">{profile.stylePersonality?.primary?.type}</span>
+                            </div>
+                        </div>
+                        {profile.colorPalette?.best && (
+                            <div className="profile-colors">
+                                <span className="colors-label">Best Colors:</span>
+                                <div className="colors-row">
+                                    {profile.colorPalette.best.slice(0, 5).map((color, idx) => (
+                                        <div
+                                            key={idx}
+                                            className="color-dot"
+                                            style={{ backgroundColor: color.hex }}
+                                            title={color.name}
+                                        ></div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
                     </div>
                 </section>
             )}

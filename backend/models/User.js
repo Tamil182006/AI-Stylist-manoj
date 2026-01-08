@@ -42,6 +42,22 @@ const userSchema = new mongoose.Schema({
         occasion: String,
         createdAt: { type: Date, default: Date.now }
     }],
+    styleProfile: {
+        physical: {
+            faceShape: mongoose.Schema.Types.Mixed,
+            skinTone: mongoose.Schema.Types.Mixed,
+            facialSymmetry: Number,
+            hair: mongoose.Schema.Types.Mixed,
+            eyes: mongoose.Schema.Types.Mixed
+        },
+        bodyType: mongoose.Schema.Types.Mixed,
+        stylePersonality: mongoose.Schema.Types.Mixed,
+        colorPalette: mongoose.Schema.Types.Mixed,
+        recommendations: mongoose.Schema.Types.Mixed,
+        occasion: String,
+        analyzedAt: Date,
+        photoUrl: String
+    },
     savedColors: [String],
     savedProducts: [String],
     createdAt: {

@@ -241,9 +241,7 @@ function getMockProducts(styleCategory, colors) {
     ];
 }
 
-// ============================================
-// CATEGORY DETECTION FOR OUTFIT BUILDER
-// ============================================
+
 function detectCategory(productName) {
     const nameLower = productName.toLowerCase();
 

@@ -28,12 +28,14 @@ const virtualTryonRoute = require('./routes/virtualTryon');
 const authRoute = require('./routes/auth');
 const dashboardRoute = require('./routes/dashboard');
 const outfitRoute = require('./routes/outfits');
+const profileRoute = require('./routes/profile');
 
 // Add this with your other route registrations
 app.use('/api', virtualTryonRoute);
 app.use('/api', authRoute);
 app.use('/api', dashboardRoute);
 app.use('/api', outfitRoute);
+app.use('/api/profile', profileRoute);
 
 // Basic Route
 app.get('/', (req, res) => {
