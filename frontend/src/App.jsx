@@ -8,6 +8,8 @@ import DashboardLayout from './components/Dashboard/DashboardLayout'
 import DashboardHome from './components/Dashboard/DashboardHome'
 import OutfitsPage from './components/Pages/OutfitsPage'
 import SearchResults from './components/Pages/SearchResults'
+import ChatPage from './components/Pages/ChatPage'
+import ProfilePage from './components/Pages/ProfilePage'
 import UploadForm from './components/UploadForm'
 import Result from './components/Result'
 import './App.css'
@@ -41,14 +43,6 @@ function UploadPage() {
 }
 
 // Placeholder components for features (we'll build these next)
-function ChatPage() {
-    return (
-        <div className="page-container">
-            <h1>Style Chat</h1>
-            <p>AI Style Assistant coming soon! 💬</p>
-        </div>
-    );
-}
 
 function ColorPalettePage() {
     return (
@@ -64,28 +58,6 @@ function HistoryPage() {
         <div className="page-container">
             <h1>Style History</h1>
             <p>Evolution Tracker coming soon! 📈</p>
-        </div>
-    );
-}
-
-function ProfilePage() {
-    const { user } = useAuth();
-
-    return (
-        <div className="page-container">
-            <h1>Profile</h1>
-            <div style={{
-                padding: '2rem',
-                background: 'rgba(255, 255, 255, 0.05)',
-                borderRadius: '16px',
-                marginTop: '2rem'
-            }}>
-                <p><strong>Name:</strong> {user?.name}</p>
-                <p><strong>Email:</strong> {user?.email}</p>
-                <p style={{ marginTop: '1rem', color: '#a8a8b3' }}>
-                    Profile customization coming soon!
-                </p>
-            </div>
         </div>
     );
 }

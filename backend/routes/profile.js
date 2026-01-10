@@ -92,4 +92,45 @@ router.get('/', authenticate, async (req, res) => {
     }
 });
 
+// @route   PUT /api/profile/preferences
+// @desc    Update user style preferences
+// @access  Private
+router.put('/preferences', authenticate, async (req, res) => {
+    try {
+        const { preferences } = req.body;
+
+        const user = await User.findById(req.userId);
+
+        if (!user) {
+            return res.status(404).json({ success: false, error: 'User not found' });
+        }
+
+        // Merge preferences with existing profile
+        if (!user.styleProfile) {
+            user.styleProfile = {};
+        }
+
+        user.styleProfile.preferences = {
+            ...user.styleProfile.preferences,
+            ...preferences,
+            updatedAt: new Date()
+        };
+
+        await user.save();
+
+        res.status(200).json({
+            success: true,
+            message: 'Preferences updated successfully!',
+            preferences: user.styleProfile.preferences
+        });
+
+    } catch (error) {
+        console.error('Update preferences error:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Failed to update preferences.'
+        });
+    }
+});
+
 module.exports = router;

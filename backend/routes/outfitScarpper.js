@@ -241,7 +241,6 @@ function getMockProducts(styleCategory, colors) {
     ];
 }
 
-
 function detectCategory(productName) {
     const nameLower = productName.toLowerCase();
 

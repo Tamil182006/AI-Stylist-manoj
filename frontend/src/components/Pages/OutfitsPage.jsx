@@ -210,89 +210,119 @@ const OutfitsPage = () => {
 
             {/* Main Builder */}
             <div className="outfit-builder-v2">
-                {/* Canvas */}
-                <div className="outfit-canvas-main">
-                    <h2 className="canvas-title">Your Outfit</h2>
+                {/* Mannequin Canvas */}
+                <div className="mannequin-section">
+                    <h2 className="canvas-title">Your Outfit Preview</h2>
 
-                    <div className="outfit-slots-grid">
-                        {/* Top Slot */}
-                        <div className={`outfit-slot-v2 ${outfitItems.top ? 'filled' : 'empty'}`}>
-                            {outfitItems.top ? (
-                                <div className="slot-content">
-                                    <button className="remove-btn" onClick={() => removeItem('top')}>×</button>
-                                    <img src={outfitItems.top.image} alt={outfitItems.top.name} />
-                                    <div className="item-details">
-                                        <p className="item-name">{outfitItems.top.name}</p>
-                                        <p className="item-price">{outfitItems.top.price}</p>
-                                    </div>
-                                </div>
-                            ) : (
-                                <button className="select-btn" onClick={() => openSearchModal('top')}>
-                                    <span className="select-icon">👔</span>
-                                    <span>Select Shirt/Top</span>
-                                </button>
-                            )}
-                        </div>
+                    <div className="mannequin-canvas">
+                        {/* Mannequin Silhouette */}
+                        <svg className="mannequin-silhouette" viewBox="0 0 200 400" xmlns="http://www.w3.org/2000/svg">
+                            {/* Head */}
+                            <ellipse cx="100" cy="30" rx="20" ry="25" fill="#E0E0E0" opacity="0.3" />
+                            {/* Neck */}
+                            <rect x="95" y="50" width="10" height="15" fill="#E0E0E0" opacity="0.3" />
+                            {/* Torso */}
+                            <path d="M 70 65 L 70 180 L 80 190 L 120 190 L 130 180 L 130 65 Z"
+                                fill="#E0E0E0" opacity="0.3" />
+                            {/* Arms */}
+                            <rect x="50" y="70" width="20" height="100" rx="10" fill="#E0E0E0" opacity="0.3" />
+                            <rect x="130" y="70" width="20" height="100" rx="10" fill="#E0E0E0" opacity="0.3" />
+                            {/* Legs */}
+                            <rect x="75" y="190" width="20" height="180" rx="8" fill="#E0E0E0" opacity="0.3" />
+                            <rect x="105" y="190" width="20" height="180" rx="8" fill="#E0E0E0" opacity="0.3" />
+                        </svg>
 
-                        {/* Bottom Slot */}
-                        <div className={`outfit-slot-v2 ${outfitItems.bottom ? 'filled' : 'empty'}`}>
-                            {outfitItems.bottom ? (
-                                <div className="slot-content">
-                                    <button className="remove-btn" onClick={() => removeItem('bottom')}>×</button>
-                                    <img src={outfitItems.bottom.image} alt={outfitItems.bottom.name} />
-                                    <div className="item-details">
-                                        <p className="item-name">{outfitItems.bottom.name}</p>
-                                        <p className="item-price">{outfitItems.bottom.price}</p>
-                                    </div>
-                                </div>
-                            ) : (
-                                <button className="select-btn" onClick={() => openSearchModal('bottom')}>
-                                    <span className="select-icon">👖</span>
-                                    <span>Select Pants</span>
-                                </button>
-                            )}
-                        </div>
+                        {/* Top Layer */}
+                        {outfitItems.top && (
+                            <div className="outfit-layer top-layer">
+                                <img
+                                    src={outfitItems.top.image}
+                                    alt={outfitItems.top.name}
+                                />
+                                <button className="remove-layer-btn" onClick={() => removeItem('top')}>×</button>
+                            </div>
+                        )}
 
-                        {/* Shoes Slot */}
-                        <div className={`outfit-slot-v2 ${outfitItems.shoes ? 'filled' : 'empty'}`}>
-                            {outfitItems.shoes ? (
-                                <div className="slot-content">
-                                    <button className="remove-btn" onClick={() => removeItem('shoes')}>×</button>
-                                    <img src={outfitItems.shoes.image} alt={outfitItems.shoes.name} />
-                                    <div className="item-details">
-                                        <p className="item-name">{outfitItems.shoes.name}</p>
-                                        <p className="item-price">{outfitItems.shoes.price}</p>
-                                    </div>
-                                </div>
-                            ) : (
-                                <button className="select-btn" onClick={() => openSearchModal('shoes')}>
-                                    <span className="select-icon">👞</span>
-                                    <span>Select Shoes</span>
-                                </button>
-                            )}
-                        </div>
+                        {/* Bottom Layer */}
+                        {outfitItems.bottom && (
+                            <div className="outfit-layer bottom-layer">
+                                <img
+                                    src={outfitItems.bottom.image}
+                                    alt={outfitItems.bottom.name}
+                                />
+                                <button className="remove-layer-btn" onClick={() => removeItem('bottom')}>×</button>
+                            </div>
+                        )}
 
-                        {/* Accessories Slot */}
-                        <div className={`outfit-slot-v2 ${outfitItems.accessories ? 'filled' : 'empty'}`}>
-                            {outfitItems.accessories ? (
-                                <div className="slot-content">
-                                    <button className="remove-btn" onClick={() => removeItem('accessories')}>×</button>
-                                    <img src={outfitItems.accessories.image} alt={outfitItems.accessories.name} />
-                                    <div className="item-details">
-                                        <p className="item-name">{outfitItems.accessories.name}</p>
-                                        <p className="item-price">{outfitItems.accessories.price}</p>
-                                    </div>
-                                </div>
-                            ) : (
-                                <button className="select-btn" onClick={() => openSearchModal('accessories')}>
-                                    <span className="select-icon">⌚</span>
-                                    <span>Select Accessories</span>
-                                </button>
-                            )}
-                        </div>
+                        {/* Empty State Messages */}
+                        {!outfitItems.top && (
+                            <div className="empty-slot-indicator top-indicator">
+                                <span>👔 Add Top</span>
+                            </div>
+                        )}
+                        {!outfitItems.bottom && (
+                            <div className="empty-slot-indicator bottom-indicator">
+                                <span>👖 Add Bottom</span>
+                            </div>
+                        )}
                     </div>
 
-                    {/* Summary */}
+                    {/* Selection Buttons */}
+                    <div className="item-selector-buttons">
+                        <button
+                            className={`selector-btn ${outfitItems.top ? 'has-item' : ''}`}
+                            onClick={() => openSearchModal('top')}
+                        >
+                            {outfitItems.top ? (
+                                <>
+                                    <img src={outfitItems.top.image} alt="" className="mini-thumb" />
+                                    <span>Change Top</span>
+                                </>
+                            ) : (
+                                <>
+                                    <span className="btn-icon">👔</span>
+                                    <span>Select Top</span>
+                                </>
+                            )}
+                        </button>
+
+                        <button
+                            className={`selector-btn ${outfitItems.bottom ? 'has-item' : ''}`}
+                            onClick={() => openSearchModal('bottom')}
+                        >
+                            {outfitItems.bottom ? (
+                                <>
+                                    <img src={outfitItems.bottom.image} alt="" className="mini-thumb" />
+                                    <span>Change Bottom</span>
+                                </>
+                            ) : (
+                                <>
+                                    <span className="btn-icon">👖</span>
+                                    <span>Select Bottom</span>
+                                </>
+                            )}
+                        </button>
+                    </div>
+
+                    {/* Item Details Panel */}
+                    <div className="outfit-items-details">
+                        {outfitItems.top && (
+                            <div className="detail-item">
+                                <span className="detail-label">Top:</span>
+                                <span className="detail-name">{outfitItems.top.name}</span>
+                                <span className="detail-price">{outfitItems.top.price}</span>
+                            </div>
+                        )}
+                        {outfitItems.bottom && (
+                            <div className="detail-item">
+                                <span className="detail-label">Bottom:</span>
+                                <span className="detail-name">{outfitItems.bottom.name}</span>
+                                <span className="detail-price">{outfitItems.bottom.price}</span>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Summary & Actions */}
                     <div className="outfit-summary">
                         <div className="total-price">
                             <span>Total:</span>
