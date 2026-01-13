@@ -1,24 +1,22 @@
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
+import './DashboardHome.css';
 
 const DashboardHome = () => {
     const { user } = useAuth();
     const navigate = useNavigate();
-    const [stats, setStats] = useState({
-        totalAnalyses: 0,
-        totalOutfits: 0,
-        savedColors: 0,
-        faceShape: 'Not analyzed yet'
-    });
-    const [recentAnalyses, setRecentAnalyses] = useState([]);
-    const [loading, setLoading] = useState(true);
     const [profile, setProfile] = useState(null);
+    const [stats, setStats] = useState({
+        outfitsCreated: 0,
+        challengesJoined: 0,
+        styleScore: 0
+    });
 
     useEffect(() => {
-        fetchDashboardData();
         fetchProfile();
+        fetchStats();
     }, []);
 
     const fetchProfile = async () => {
@@ -27,7 +25,7 @@ const DashboardHome = () => {
             const response = await axios.get('http://localhost:5000/api/profile', {
                 headers: { Authorization: `Bearer ${token}` }
             });
-            if (response.data.success && response.data.hasProfile) {
+            if (response.data.success) {
                 setProfile(response.data.profile);
             }
         } catch (error) {
@@ -35,280 +33,151 @@ const DashboardHome = () => {
         }
     };
 
-    const fetchDashboardData = async () => {
+    const fetchStats = async () => {
         try {
             const token = localStorage.getItem('token');
-            const response = await axios.get('http://localhost:5000/api/dashboard/stats', {
+            const response = await axios.get('http://localhost:5000/api/outfits', {
                 headers: { Authorization: `Bearer ${token}` }
             });
-
             if (response.data.success) {
-                setStats(response.data.stats);
-                setRecentAnalyses(response.data.recentAnalyses || []);
+                setStats(prev => ({
+                    ...prev,
+                    outfitsCreated: response.data.outfits.length
+                }));
             }
         } catch (error) {
-            console.error('Error fetching dashboard data:', error);
-        } finally {
-            setLoading(false);
+            console.error('Error fetching stats:', error);
         }
     };
 
-    const quickActions = [
-        {
-            title: 'Upload New Photo',
-            description: 'Get AI-powered style analysis',
-            icon: '',
-            gradient: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
-            path: '/dashboard/upload'
-        },
-        {
-            title: 'Chat with AI',
-            description: 'Ask style questions',
-            icon: '',
-            gradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-            path: '/dashboard/chat'
-        },
-        {
-            title: 'Color Palette',
-            description: 'Discover your colors',
-            icon: '',
-            gradient: 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)',
-            path: '/dashboard/colors'
-        }
-    ];
-
-    if (loading) {
-        return (
-            <div className="dashboard-loading">
-                <div className="loader">Loading your dashboard...</div>
-            </div>
-        );
-    }
+    const calculateCompletion = () => {
+        if (!profile) return 0;
+        let completed = 0;
+        let total = 5;
+        if (profile.physical) completed++;
+        if (profile.bodyType) completed++;
+        if (profile.stylePersonality) completed++;
+        if (profile.colorPalette) completed++;
+        if (profile.preferences) completed++;
+        return Math.round((completed / total) * 100);
+    };
 
     return (
         <div className="dashboard-home">
-            {/* Welcome Section */}
-            <section className="welcome-section">
-                <div className="welcome-content">
-                    <h1 className="welcome-title">
-                        Welcome back, <span className="highlight">{user?.name}</span>!
-                    </h1>
-                    <p className="welcome-subtitle">
-                        Ready to discover your perfect style today?
-                    </p>
-                </div>
-                <div className="welcome-actions">
-                    <button
-                        className="btn-primary-gradient"
-                        onClick={() => navigate('/dashboard/upload')}
-                    >
-                        Start New Analysis
-                    </button>
-                    <button
-                        className="btn-secondary-outline"
-                        onClick={() => navigate('/dashboard/outfits')}
-                    >
-                        Explore Outfits
-                    </button>
-                </div>
-            </section>
+            <div className="welcome-section">
+                <h1>Welcome back, {user?.name}! 👋</h1>
+                <p>Your personal AI stylist is ready to help you look your best</p>
+            </div>
 
             {/* Stats Cards */}
-            <section className="stats-section">
-                <div className="stats-grid">
-                    <div className="stat-card" data-color="purple">
-                        <div className="stat-icon"></div>
-                        <div className="stat-content">
-                            <h3 className="stat-number">{stats.totalAnalyses}</h3>
-                            <p className="stat-label">Analyses Done</p>
-                        </div>
-                        <div className="stat-glow"></div>
-                    </div>
-
-                    <div className="stat-card" data-color="pink">
-                        <div className="stat-icon"></div>
-                        <div className="stat-content">
-                            <h3 className="stat-number">{stats.totalOutfits}</h3>
-                            <p className="stat-label">Outfits Created</p>
-                        </div>
-                        <div className="stat-glow"></div>
-                    </div>
-
-                    <div className="stat-card" data-color="cyan">
-                        <div className="stat-icon"></div>
-                        <div className="stat-content">
-                            <h3 className="stat-number">{stats.savedColors}</h3>
-                            <p className="stat-label">Saved Colors</p>
-                        </div>
-                        <div className="stat-glow"></div>
-                    </div>
-
-                    <div className="stat-card" data-color="green">
-                        <div className="stat-icon"></div>
-                        <div className="stat-content">
-                            <h3 className="stat-number">{stats.faceShape}</h3>
-                            <p className="stat-label">Face Shape</p>
-                        </div>
-                        <div className="stat-glow"></div>
+            <div className="stats-grid">
+                <div className="stat-card">
+                    <div className="stat-icon">🎨</div>
+                    <div className="stat-content">
+                        <h3>{stats.outfitsCreated}</h3>
+                        <p>Outfits Created</p>
                     </div>
                 </div>
-            </section>
+
+                <div className="stat-card">
+                    <div className="stat-icon">🏆</div>
+                    <div className="stat-content">
+                        <h3>{stats.challengesJoined}</h3>
+                        <p>Challenges Joined</p>
+                    </div>
+                </div>
+
+                <div className="stat-card">
+                    <div className="stat-icon">⭐</div>
+                    <div className="stat-content">
+                        <h3>{calculateCompletion()}%</h3>
+                        <p>Profile Complete</p>
+                    </div>
+                </div>
+            </div>
 
             {/* Quick Actions */}
-            <section className="quick-actions-section">
-                <h2 className="section-title">
-                    <span className="title-icon"></span>
-                    Quick Actions
-                </h2>
-                <div className="quick-actions-grid">
-                    {quickActions.map((action, index) => (
-                        <div
-                            key={index}
-                            className="quick-action-card"
-                            onClick={() => navigate(action.path)}
-                            style={{ '--card-gradient': action.gradient }}
-                        >
-                            <div className="action-icon">{action.icon}</div>
-                            <h3 className="action-title">{action.title}</h3>
-                            <p className="action-description">{action.description}</p>
-                            <div className="action-arrow">→</div>
-                        </div>
-                    ))}
-                </div>
-            </section>
-
-            {/* Recent Activity */}
-            <section className="recent-activity-section">
-                <div className="section-header">
-                    <h2 className="section-title">
-                        <span className="title-icon"></span>
-                        Recent Analyses
-                    </h2>
-                    <button
-                        className="view-all-btn"
-                        onClick={() => navigate('/dashboard/history')}
+            <div className="quick-actions-section">
+                <h2>Quick Actions</h2>
+                <div className="actions-grid">
+                    <div
+                        className="action-card"
+                        onClick={() => navigate('/dashboard/upload')}
                     >
-                        View All →
+                        <span className="action-icon">📸</span>
+                        <h3>Analyze Photo</h3>
+                        <p>Get your personalized style profile</p>
+                    </div>
+
+                    <div
+                        className="action-card"
+                        onClick={() => navigate('/dashboard/outfits')}
+                    >
+                        <span className="action-icon">👔</span>
+                        <h3>Build Outfit</h3>
+                        <p>Mix and match your perfect look</p>
+                    </div>
+
+                    <div
+                        className="action-card"
+                        onClick={() => navigate('/dashboard/chat')}
+                    >
+                        <span className="action-icon">💬</span>
+                        <h3>Ask AI Stylist</h3>
+                        <p>Get personalized fashion advice</p>
+                    </div>
+
+                    <div
+                        className="action-card"
+                        onClick={() => navigate('/dashboard/profile')}
+                    >
+                        <span className="action-icon">👤</span>
+                        <h3>View Profile</h3>
+                        <p>See your complete style analysis</p>
+                    </div>
+                </div>
+            </div>
+
+            {/* Profile Status */}
+            {profile && profile.physical ? (
+                <div className="profile-summary">
+                    <h2>Your Style Profile</h2>
+                    <div className="profile-highlights">
+                        <div className="highlight-item">
+                            <label>Face Shape:</label>
+                            <span>{profile.physical.faceShape?.type}</span>
+                        </div>
+                        <div className="highlight-item">
+                            <label>Skin Tone:</label>
+                            <span>{profile.physical.skinTone?.category}</span>
+                        </div>
+                        <div className="highlight-item">
+                            <label>Body Type:</label>
+                            <span>{profile.bodyType?.category}</span>
+                        </div>
+                        <div className="highlight-item">
+                            <label>Style:</label>
+                            <span>{profile.stylePersonality?.primary?.type}</span>
+                        </div>
+                    </div>
+                    <button
+                        className="btn-view-full"
+                        onClick={() => navigate('/dashboard/profile')}
+                    >
+                        View Full Profile →
                     </button>
                 </div>
-
-                {recentAnalyses.length > 0 ? (
-                    <div className="activity-list">
-                        {recentAnalyses.map((analysis, index) => (
-                            <div key={index} className="activity-item">
-                                <div className="activity-image">
-                                    {analysis.imagePath ? (
-                                        <img src={`http://localhost:5000${analysis.imagePath}`} alt="Analysis" />
-                                    ) : (
-                                        <div className="placeholder-image">📷</div>
-                                    )}
-                                </div>
-                                <div className="activity-details">
-                                    <p className="activity-date">
-                                        {new Date(analysis.date).toLocaleDateString('en-US', {
-                                            month: 'short',
-                                            day: 'numeric',
-                                            year: 'numeric'
-                                        })}
-                                    </p>
-                                    <p className="activity-info">
-                                        <span>Face: {analysis.faceShape}</span>
-                                        <span className="separator">•</span>
-                                        <span>Tone: {analysis.skinTone}</span>
-                                    </p>
-                                    <p className="activity-occasion">{analysis.occasion}</p>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                ) : (
-                    <div className="empty-state">
-                        <div className="empty-icon"></div>
-                        <h3>No analyses yet</h3>
-                        <p>Upload your first photo to get started!</p>
-                        <button
-                            className="btn-primary-gradient"
-                            onClick={() => navigate('/dashboard/upload')}
-                        >
-                            Upload Photo
-                        </button>
-                    </div>
-                )}
-            </section>
-
-            {/* Style Insights (if user has data) */}
-            {stats.totalAnalyses > 0 && (
-                <section className="insights-section">
-                    <h2 className="section-title">
-                        <span className="title-icon"></span>
-                        Your Style Insights
-                    </h2>
-                    <div className="insights-card">
-                        <div className="insight-item">
-                            <span className="insight-label">Dominant Face Shape:</span>
-                            <span className="insight-value">{stats.faceShape}</span>
-                        </div>
-                        <div className="insight-item">
-                            <span className="insight-label">Total Analyses:</span>
-                            <span className="insight-value">{stats.totalAnalyses}</span>
-                        </div>
-                        <div className="insight-item">
-                            <span className="insight-label">Outfits Created:</span>
-                            <span className="insight-value">{stats.totalOutfits}</span>
-                        </div>
-                    </div>
-                </section>
-            )}
-
-            {/* Profile Summary (if exists) */}
-            {profile && (
-                <section className="profile-summary-section">
-                    <h2 className="section-title">
-                        <span className="title-icon">✨</span>
-                        Your Style Profile
-                    </h2>
-                    <div className="profile-summary-card">
-                        <div className="profile-row">
-                            <div className="profile-item">
-                                <span className="profile-label">Face Shape</span>
-                                <span className="profile-value">{profile.physical?.faceShape?.type}</span>
-                            </div>
-                            <div className="profile-item">
-                                <span className="profile-label">Skin Tone</span>
-                                <div className="profile-skin">
-                                    <div
-                                        className="skin-dot"
-                                        style={{ backgroundColor: profile.physical?.skinTone?.hex }}
-                                    ></div>
-                                    <span className="profile-value">{profile.physical?.skinTone?.category}</span>
-                                </div>
-                            </div>
-                            <div className="profile-item">
-                                <span className="profile-label">Body Type</span>
-                                <span className="profile-value">{profile.bodyType?.category}</span>
-                            </div>
-                            <div className="profile-item">
-                                <span className="profile-label">Style</span>
-                                <span className="profile-value">{profile.stylePersonality?.primary?.type}</span>
-                            </div>
-                        </div>
-                        {profile.colorPalette?.best && (
-                            <div className="profile-colors">
-                                <span className="colors-label">Best Colors:</span>
-                                <div className="colors-row">
-                                    {profile.colorPalette.best.slice(0, 5).map((color, idx) => (
-                                        <div
-                                            key={idx}
-                                            className="color-dot"
-                                            style={{ backgroundColor: color.hex }}
-                                            title={color.name}
-                                        ></div>
-                                    ))}
-                                </div>
-                            </div>
-                        )}
-                    </div>
-                </section>
+            ) : (
+                <div className="profile-prompt">
+                    <h2>Complete Your Profile</h2>
+                    <p>Upload a photo to get personalized style recommendations</p>
+                    <button
+                        className="btn-upload"
+                        onClick={() => navigate('/dashboard/upload')}
+                    >
+                        Upload Photo Now
+                    </button>
+                </div>
             )}
         </div>
     );

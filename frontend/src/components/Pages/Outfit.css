@@ -923,3 +923,51 @@
     }
 }
 
+
+/* ============================================
+   LOADING SKELETON FOR OUTFIT PAGE
+   ============================================ */
+
+.outfit-skeleton {
+    animation: fadeIn 0.3s ease-out;
+    padding: 2rem;
+}
+
+.outfit-skeleton .skeleton {
+    background: linear-gradient(
+        90deg,
+        #f0f0f0 0%,
+        #f8f8f8 50%,
+        #f0f0f0 100%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+    border-radius: 12px;
+}
+
+.skeleton-outfit-header {
+    height: 60px;
+    margin-bottom: 2rem;
+}
+
+.skeleton-outfit-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.skeleton-outfit-slot {
+    aspect-ratio: 3/4;
+    border-radius: 14px;
+}
+
+/* Smooth transitions for outfit cards */
+.outfit-slot-v2 {
+    animation: scaleIn 0.4s ease-out;
+}
+
+.outfit-slot-v2.filled {
+    animation: fadeInUp 0.5s ease-out;
+}
+
